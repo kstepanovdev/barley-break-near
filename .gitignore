@@ -11,6 +11,11 @@
 # production
 /build
 
+# rust's targets
+pkg/
+contract/target
+target/
+
 # misc
 .DS_Store
 .env.local
