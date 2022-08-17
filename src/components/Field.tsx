@@ -5,6 +5,7 @@ interface IFieldState {
     field: Uint8Array,
     solved: boolean
     move: IFieldMove
+    moves_amount: number
 }
 interface IFieldProps {}
 
@@ -21,19 +22,30 @@ class Field extends React.Component<IFieldProps, IFieldState> {
           field: Uint8Array.from([]),
           solved: false,
           move: { from: null, to: null, selected: 'from' },
+          moves_amount: 0
         };
     }
 
     makeMove(index: number) {
-        let move = this.state.move;
+        let move: IFieldMove = this.state.move;
         move[move.selected] = index;
         move.selected = move.selected === 'from' ? 'to' : 'from';
 
         // TODO: handle double click on the same element
-        if (move.from != null && move.to != null) {
+        if (move.from === null || move.to === null) {
+            return;
+        } else {
             this.setState({
                 field: swap(this.state.field, move.from, move.to),
                 move: { from: null, to: null, selected: 'from' },
+            }, () => {
+                if (is_solved(this.state.field)) {
+                    // TODO: call the contract with amount of moves
+                } else {
+                    this.setState(() => ({
+                        moves_amount: this.state.moves_amount + 1
+                    }))
+                };
             })
         }
     }

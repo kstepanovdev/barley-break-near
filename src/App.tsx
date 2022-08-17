@@ -5,7 +5,6 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        {/* <button onClick={() => {  }}>Start a new game</button> */}
         <Game />
       </header>
     </div>
