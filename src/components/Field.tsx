@@ -1,4 +1,4 @@
-import React, { createElement, DOMElement, ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 import init, { init_field, swap, is_solved } from 'barkley-break'
 
 interface IFieldState {
@@ -28,8 +28,8 @@ class Field extends React.Component<IFieldProps, IFieldState> {
         let move = this.state.move;
         move[move.selected] = index;
         move.selected = move.selected === 'from' ? 'to' : 'from';
-        this.setState({ move });
 
+        // TODO: handle double click on the same element
         if (move.from != null && move.to != null) {
             this.setState({
                 field: swap(this.state.field, move.from, move.to),

@@ -12,7 +12,9 @@ pub fn init_field() -> js_sys::Uint8Array {
 
 #[wasm_bindgen]
 pub fn swap(mut field: Vec<u8>, from: usize, to: usize) -> js_sys::Uint8Array {
-    field.swap(from, to);
+    if matches!(from.abs_diff(to), 1 | 4) && [field[to], field[from]].iter().any(|&x| x == 0) {
+        field.swap(from, to);
+    }
 
     js_sys::Uint8Array::from(&field[..])
 }
