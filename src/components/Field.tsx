@@ -11,6 +11,7 @@ interface IFieldProps {}
 interface IFieldMove {
     from: null | number,
     to: null | number
+    selected: 'from' | 'to'
 }
 
 class Field extends React.Component<IFieldProps, IFieldState> {
@@ -19,20 +20,21 @@ class Field extends React.Component<IFieldProps, IFieldState> {
         this.state = {
           field: Uint8Array.from([]),
           solved: false,
-          move: { from: null, to: null }
+          move: { from: null, to: null, selected: 'from' },
         };
     }
 
-    makeMove(index: number, cell_val: number) {
-        let from = this.state.move.from;
-        let to = this.state.move.to;
+    makeMove(index: number) {
+        let move = this.state.move;
+        move[move.selected] = index;
+        move.selected = move.selected === 'from' ? 'to' : 'from';
+        this.setState({ move });
 
-        if (from === null) {
-            from = cell_val
-        } else if (to === null) {
-            to = cell_val
-        } else {
-            this.setState({ field: swap(this.state.field, from, to) })
+        if (move.from != null && move.to != null) {
+            this.setState({
+                field: swap(this.state.field, move.from, move.to),
+                move: { from: null, to: null, selected: 'from' },
+            })
         }
     }
 
@@ -52,7 +54,7 @@ class Field extends React.Component<IFieldProps, IFieldState> {
         this.state.field.forEach((cell_val: number, index: number) => {
             if ((index !== 0 && index % 4 === 0) || index === 15) {
                 if (index === 15) {
-                    cells.push(<button className="square" key={index} onClick={ () => this.makeMove(index, cell_val)} >{ cell_val }</button>)
+                    cells.push(<button className="square" key={index} onClick={ () => this.makeMove(index)} >{ cell_val }</button>)
                 }
 
                 row_el = React.createElement(
@@ -63,7 +65,7 @@ class Field extends React.Component<IFieldProps, IFieldState> {
                 cells = []
                 rows.push(row_el)
             }
-            cells.push(<button className="square" key={index} onClick={ () => this.makeMove(index, cell_val)} >{ cell_val }</button>)
+            cells.push(<button className="square" key={index} onClick={ () => this.makeMove(index)} >{ cell_val }</button>)
         })
 
         return(
